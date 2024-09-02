@@ -7,8 +7,9 @@ use App\Http\Controllers\Api\{
     FilmController,
 };
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+//Route::get('/user', function (Request $request) {
+    //return $request->user();
+//})->middleware('auth:sanctum');
+
 
 Route::apiResource('/movies', FilmController::class);

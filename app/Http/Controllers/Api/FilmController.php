@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class FilmController extends Controller
 {
-    private FilmRepositoryInterface $filmRepositoryInterface;
+    private FilmRepositoryInterface $FilmRepositoryInterface;
 
-    public function __construct(FilmRepositoryInterface $filmRepositoryInterface)
+    public function __construct(FilmRepositoryInterface $FilmRepositoryInterface)
     {
-        $this->filmRepositoryInterface = $filmRepositoryInterface;
+        $this->FilmRepositoryInterface = $FilmRepositoryInterface;
     }
     /**
      * Display a listing of the resource.
@@ -28,7 +28,7 @@ class FilmController extends Controller
     public function index()
     {
         //
-        $data = $this->filmRepositoryInterface->index();
+        $data = $this->FilmRepositoryInterface->index();
 
         return ApiResponseClass::sendResponse(FilmResource::collection($data), '', 200);
     }
@@ -59,10 +59,10 @@ class FilmController extends Controller
 
         DB::beginTransaction();
         try{
-            $film = $this->filmRepositoryInterface->store($details);
+            $film = $this->FilmRepositoryInterface->store($details);
             DB::commit();
             return ApiResponseClass::sendResponse(new FilmResource($film), 'Film Create Successful', 200);
-        } catch(\Exeption $ex) {
+        } catch(\Exception $ex) {
             return ApiResponseClass::rollback($ex);
         }
     }
@@ -73,7 +73,7 @@ class FilmController extends Controller
     public function show(string $id)
     {
         //
-        $film = $this->filmRepositoryInterface->getById($id);
+        $film = $this->FilmRepositoryInterface->getById($id);
         return ApiResponseClass::sendResponse(new FilmResource($film),'', 200);
     }
 
@@ -90,21 +90,21 @@ class FilmController extends Controller
      */
     public function update(UpdateFilmRequest $request, $id)
     {
-        // $posterPath = $request->file('poster')->store('images');
+        $posterPath = $request->file('poster')->store('images');
         $updateDetails = [
             'title'     => $request->title,
             'sinopsis'  => $request->sinopsis,
-            'poster'    => 'storage/images/h6.jpg',
+            'poster'    => $posterPath,
             'year'      => $request->year,
             'genre_id'  => $request->genre_id,
         ];
 
         DB::beginTransaction();
         try{
-            $film = $this->filmRepositoryInterface->update($updateDetails, $id);
+            $film = $this->FilmRepositoryInterface->update($updateDetails, $id);
             DB::commit();
             return ApiResponseClass::sendResponse('Film Update Successful', 201);
-        } catch(\Exeption $ex) {
+        } catch(\Exception $ex) {
             return ApiResponseClass::rollback($ex);
         }
     }
@@ -115,7 +115,7 @@ class FilmController extends Controller
     public function destroy(string $id)
     {
         //
-        $this->filmRepositoryInterface->delete($id);
+        $this->FilmRepositoryInterface->delete($id);
         return ApiResponseClass::sendResponse('Film Delete Successful', 204);
     }
 }
